@@ -8,12 +8,13 @@
 		src="https://code.jquery.com/jquery-3.4.0.min.js"
 		integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
 		crossorigin="anonymous">
-	</script>
+    </script>
+
     </head>
     <body>
         <div id="emotionContainer">
             <video autoplay="true" width="640" height="480" id="videoElement"></video>
-            <p>Il mio stato d'animo: <span id ="emotion">Just on moment</span></p>
+            <p>Il mio stato d'animo: <span id ="emotion">Attendi un attimo</span></p>
         </div>
     </body>
 </html>
@@ -31,13 +32,16 @@ var offset_y = 20;
 startVideo();
 
 
-// LOAD FACE-API PER IL DETECT DEI VOLTI
-jQuery.getScript('/FaceEmotion/face-api.js', function(){
-    console.log('loaded FaceApi');
-    setTimeout(function(){
-        startFaceEmotion();
-    },2000); 
-});
+ // LOAD FACE-API PER IL DETECT DEI VOLTI
+ function loadFaceApi(){
+    jQuery.getScript('/js/FaceEmotion/face-api.js', function(){
+                    console.log('loaded FaceApi');
+                    setTimeout(function(){
+                        startFaceEmotion();
+                    },4000); 
+                });
+ }
+
 
 
 
@@ -48,14 +52,16 @@ function startVideo() {
 
     var video = document.querySelector('video'),canvas;
     webcamElement=video;
-    
+    console.log("navigator  " + navigator.mediaDevices)
     if (navigator.mediaDevices) {
         // access the web cam
+
         navigator.mediaDevices.getUserMedia({ video: true })
             // permission granted:
             .then(function(stream) {
-                // video.src = window.URL.createObjectURL(stream);
+             //video.src = window.URL.createObjectURL(stream);
 		     video.srcObject = stream;
+             loadFaceApi();
             })
             // permission denied:
             .catch(function(error) {
@@ -67,13 +73,22 @@ function startVideo() {
 
 // AVVIA IL LOADING DEL MODELLO PER LA VERIFICA DELLE EMOZIONI
 function startFaceEmotion(){
-    loadModel('/FaceEmotion/models/mobilenetv1_models/model.json');
-    load_modello_di_riconsocimento();
+    loadModel('/js/FaceEmotion/models/mobilenetv1_models/model.json');
 }
 
 
-async function load_modello_di_riconsocimento() {
-    const Model_url = '/FaceEmotion/models/tiny_face_detector/tiny_face_detector_model-weights_manifest.json'
+
+// load emotion model
+async function loadModel(path) {
+    EmotionModel = await tf.loadLayersModel(path)
+    console.log(EmotionModel);
+    load_modello_di_riconoscimento();
+}
+
+
+async function load_modello_di_riconoscimento() {
+    //const Model_url = '/js/FaceEmotion/models/tiny_face_detector/tiny_face_detector_model-weights_manifest.json'
+    const Model_url = '/js/FaceEmotion/models/tiny_face_detector/'
     await faceapi.loadTinyFaceDetectorModel(Model_url);
     console.log("FaceEmotion modelLoaded");
     var video = document.querySelector('video'),canvas;
@@ -142,16 +157,6 @@ async function loadNetWeights(uri) {
     return new Float32Array(await (await fetch(uri)).arrayBuffer())
 }
 
-// create model
-async function createModel(path) {
-    let model = await tf.loadLayersModel(path)
-    return model
-}
-
-// load emotion model
-async function loadModel(path) {
-    EmotionModel = await createModel(path)
-}
 
 function preprocess(imgData) {
     return tf.tidy(() => {
