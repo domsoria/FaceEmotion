@@ -37,7 +37,8 @@ startVideo();
     jQuery.getScript('/js/FaceEmotion/face-api.js', function(){
                     console.log('loaded FaceApi');
                     setTimeout(function(){
-                        startFaceEmotion();
+                        load_modello_di_riconoscimento();
+                        loadTrainedModel();
                     },4000); 
                 });
  }
@@ -72,18 +73,16 @@ function startVideo() {
 
 
 // AVVIA IL LOADING DEL MODELLO PER LA VERIFICA DELLE EMOZIONI
-function startFaceEmotion(){
-    loadModel('/js/FaceEmotion/models/mobilenetv1_models/model.json');
-}
-
-
-
-// load emotion model
-async function loadModel(path) {
+async function loadTrainedModel(){
+    path='/js/FaceEmotion/models/mobilenetv1_models/model.json';
     EmotionModel = await tf.loadLayersModel(path)
     console.log(EmotionModel);
-    load_modello_di_riconoscimento();
+    load_modello_di_riconoscimento().then(function(){
+        var video = document.querySelector('video'),canvas;
+        start_riconoscimento(video);
+    });
 }
+
 
 
 async function load_modello_di_riconoscimento() {
@@ -91,8 +90,7 @@ async function load_modello_di_riconoscimento() {
     const Model_url = '/js/FaceEmotion/models/tiny_face_detector/'
     await faceapi.loadTinyFaceDetectorModel(Model_url);
     console.log("FaceEmotion modelLoaded");
-    var video = document.querySelector('video'),canvas;
-    start_riconoscimento(video);
+    
 }
 
 
