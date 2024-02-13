@@ -1,4 +1,4 @@
-Questo articolo esplora il funzionamento di un progetto web che utilizza TensorFlow.js, MobileNet, e Face API per riconoscere le emozioni delle persone in tempo reale tramite la webcam. Il codice HTML e JavaScript fornito illustra come caricare e utilizzare modelli di machine learning nel browser per analizzare video in streaming e identificare le emozioni umane.
+Questo esempio esplora il funzionamento di un progetto web che utilizza TensorFlow.js, MobileNet, e Face API per riconoscere le emozioni delle persone in tempo reale tramite la webcam. Il codice HTML e JavaScript fornito illustra come caricare e utilizzare modelli di machine learning nel browser per analizzare video in streaming e identificare le emozioni umane.
 
 ### Tecnologie Utilizzate
 
